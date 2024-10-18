@@ -1,0 +1,146 @@
+// AUTHOR: William Kavanagh. Abertay University. CMP201.2022
+// Partial Framework for AX1.3, searching
+
+#include "Search.h"
+#include <vector>
+#include <stdlib.h>		// for RNG
+#include <time.h>		// for RNG
+#include <iostream>
+#include <chrono>		// for timing
+#include <map>
+
+
+// Return index position of key in arr or -1 if not in collection.
+// Search using a naive scan.
+int LinearScan(std::vector<int> arr, int key) //loops through the array and if arr[i] equals the key then it returns i, 
+//which is the value in the array equal to the key
+{
+	for (int i = 0; i < arr.size(); i++) {
+		if (arr[i] == key) {
+			return i;
+		}
+	}
+
+
+	// TODO: Assessed [1]
+	return -1;
+}
+
+// Return index position of key in arr or -1 if not in collection.
+// Search using binary reduction
+int BinarySearch(std::vector<int> arr, int key) /*middle of arr is calculated, in a while loop, and area to search through is shortened
+until the middle variable equals the key.*/
+{
+	int high = arr.size() - 1;
+	int low = 0;
+	int middle = 0;
+	while (high >= low) {
+		middle = floor((high + low) / 2);
+		//std::cout << middle << std::endl;
+
+		if (arr[middle] == key) {
+			return middle;
+		}
+		else if (arr[middle] < key) {
+			low = middle + 1;
+		}
+		else {
+			high = middle - 1;
+		}
+	}
+	// TODO: Assessed [1]
+	return -1;
+	
+}
+
+// Return index position of key in arr or -1 if not in collection.
+// Search using interpolation guestimates.
+int InterpolationSearch(std::vector<int> arr, int key)/*works out different values based on size of vector and uses these to create a estimate, 
+once the estimate has been created the search area narrows down until while conditions fail or the estimate variable is the key.*/
+{
+	int start = 0;
+	int end = arr.size() - 1;
+	int distance = 0;
+	int valueRange = 0;
+	int indexRange = 0;
+	int estimate = 0;
+	double fraction = 0;
+
+	while (start <= end && key >= arr[start] && key <= arr[end]) {
+		distance = key - arr[start];
+		valueRange = arr[end] - arr[start];
+		fraction = distance / valueRange;
+		indexRange = end - start;
+		estimate = start + (fraction * indexRange);
+		if (arr[estimate] == key) {
+			return estimate;
+		}
+		else if (arr[estimate] < key) {
+			start = estimate + 1;
+		}
+		else {
+			end = estimate - 1;
+		}
+	}
+	return -1;
+}
+
+/*
+Generate a vector of length <size> where each element is
+1-5 larger than the previous element.
+*/
+std::vector<int> SortedVectorGenerator(int size)
+{
+	std::vector<int> v = std::vector<int>();
+	srand(time(NULL));
+	int last_value = 0;
+	for (int i = 0; i < size; i++)
+	{
+		int new_value = last_value + rand() % 5 + 1;
+		v.push_back(new_value);
+		last_value = new_value;
+	}
+	return v;
+}
+
+// Runs the three searches on the three vectors with the three targets supplied as parameters.
+// i.e. LS(v0, t0), BS(v0, t0), IS(v0, t0), LS(v1, t1), ... etc.
+// Returns a map of search name to vector of doubles with timing results in nanoseconds.
+// Example map output:
+//		"binary search":{13400, 6400, 238100}
+//		"interpolation search":{2500, 303800, 237100}
+//		"linear scan":{2200, 59700, 1.4251e+06}
+std::map<std::string, std::vector<double>> 
+runTests(std::vector<int> v0, std::vector<int> v1, std::vector<int> v2,
+int t0, int t1, int t2) /*high resolution clock is used to time all functions which are called inside a for loop, and vectors are made to
+be used inside a for loop to avoid code repition. the timings are then added to results map using push back function. */
+{
+	std::map<std::string, std::vector<double>> results;
+	std::vector<int> targets = { t0, t1, t2 };
+	std::vector<std::vector<int>> vectors = { v0, v1, v2 };
+
+
+	for (int i = 0; i < 3; i++) {
+		auto start = std::chrono::high_resolution_clock::now();
+		LinearScan(vectors[i], targets[i]);
+		auto end = std::chrono::high_resolution_clock::now();
+		results["linear scan"].push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count());
+
+		start = std::chrono::high_resolution_clock::now();
+		BinarySearch(vectors[i], targets[i]);
+		end = std::chrono::high_resolution_clock::now();
+		results["Binary search"].push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count());
+
+		start = std::chrono::high_resolution_clock::now();
+		InterpolationSearch(vectors[i], targets[i]);
+		end = std::chrono::high_resolution_clock::now();
+		results["Interpolation search"].push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count());
+		}
+	return results;
+   }
+
+
+
+
+
+// Provided for testing purposes. Remove or delete entirely (including signature) or [-1]
