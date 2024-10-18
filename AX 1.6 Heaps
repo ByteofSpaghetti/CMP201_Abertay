@@ -1,0 +1,111 @@
+// Abertay University, CMP201 AX1.6, Priority Queues over Heaps as Arrays, but they're bears.
+// Author: William Kavanagh
+// Partial Framework
+
+#include "Heap.h"
+#include "time.h"
+#include <vector>
+
+
+// Recursive operation to arrange array to satisfy heap property focusing on the element at index i
+void Heap::heapify(int i) //FIX THIS IDK WHATS WRONG, SOMETHING TO DO WITH THE RECURSIVENESS NOT STOPPING
+{
+	int biggest = i;
+	int leftest = 2 * i ;
+	int rightest = 2 * i + 1;
+	
+
+	if ((leftest <= last_index) && (arr[leftest]->hunger > arr[biggest]->hunger)) {
+		biggest = leftest;
+	}
+
+	if ((rightest <= last_index) && (arr[rightest]->hunger > arr[biggest]->hunger)) {
+		biggest = rightest;
+	}
+
+	if (biggest != i) {//I OR 1
+
+		std::swap(arr[i], arr[biggest]);
+		heapify(biggest);
+	}
+	// TODO: assessed 2 marks
+}
+
+// Add a pointer to a bear object to the heap, heapify all internal nodes.
+void Heap::push(Bear* c)
+{
+	//int currentIndex = last_index ;
+	last_index++;
+
+	if (last_index >= size) {
+		resize();
+	}
+
+	arr[last_index] = c;
+
+	for (int i = last_index / 2; i > 0; i--) {
+		std::cout << i << "\n";
+		heapify(i);
+	}
+	
+
+
+	// TODO: assessed 1 mark
+}
+
+// Doubles the array referenced by the heap, copies values in element by element, updates reference.
+void Heap::resize()
+{
+	// unassessed (look back to ArrayStacks and ArrayQueues, W4)
+	size = size * 2;
+	Bear** newArr = new Bear * [size]();
+	for (int i = 0; i <= last_index; ++i) newArr[i] = arr[i];
+	arr = newArr;
+}
+
+// Removes the element at the head of the heap, replaces with the final element, heapify all internal nodes
+Bear* Heap::pop()
+{
+	if (last_index < 1) {
+		return nullptr;
+	}
+
+	Bear* poppedBear = arr[1];
+	arr[1] = arr[last_index];
+	last_index--;
+	heapify(1);
+	return poppedBear;	// TODO: assessed 1 mark
+}
+
+// Converts the heap to a vector sorted in descending order of hunger (hungriest first). Recreates the heap.
+std::vector<Bear*> Heap::toSortedVector()
+{
+	// TODO: assessed 1 mark
+	return std::vector<Bear*>();
+}
+
+// Return a pointer to the hungriest bear
+Bear* Heap::peek()
+{
+	// unassessed
+	return arr[1];
+}
+
+// Prints the name and hunger of a given bear.
+void Bear::Check()
+{
+	// provided
+	if (name != "")	std::cout << name << " is next, with a hunger of " << hunger << "\n";
+}
+
+// Return a pointer to a randomly generated bear with some prefix+suffix combination and a random hunger value from 1-200
+Bear* Bear::randomBear()
+{
+	// provided
+	std::string first_names[] = { "Grizzly", "Big", "Chubby", "Snoozy", "Dopey", "Hungry", "Ostentatious", "Territorial", "Fluffy", "Powerful", "Grumpy", "Whinny the", "Bewildered", "Rambunctious", "Uncouth", "Mischievous", "Baby", "Elderly", "Dapper" };
+	std::string second_names[] = { "Alan", "Bella", "Charlie", "Danielle", "Evan", "Felicity", "Gerry", "Helena", "Iain", "Juliette", "Pooh" };
+	std::string name = first_names[rand() % 19] + " " + second_names[rand() % 11];
+	return new Bear(name, 1 + (rand() % 200));
+}
+
+// main() included for testing. Remove or delete before submission or [-1]. This is being accurate is not guaranteed to be sufficient for full marks.
