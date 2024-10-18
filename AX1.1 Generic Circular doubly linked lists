@@ -1,0 +1,228 @@
+// William Kavanagh, CMP201 lab 3, partial implementation
+
+#include "LinkedList.h"
+#include <iostream>
+
+// default Constructor
+template <class T>
+LinkedList<T>::LinkedList()
+{
+	LinkedList::head = nullptr;
+}
+
+// Single element constructor set head to new Node(n)
+template<class T>
+LinkedList<T>::LinkedList(T n)
+{
+	head = new Node<T>(n);
+	head->next = head;
+	head->prev = head;
+}
+
+template<class T>
+LinkedList<T>::~LinkedList()
+{
+}
+
+// Insertion, append to LL, update references.
+template<class T>
+void LinkedList<T>::Insert(T n)
+{
+	if (!head) { //if head is nullptr, a new node is created, and puts the head equal to the next node, and previous node so it just points to itself
+		head = new Node<T>(n);
+		head->next = head;
+		head->prev = head;
+	}
+	
+	else { //if nodes already exist, creates a pointer to old tail, then makes a node  after the old tail, and sets the head previous pointer
+		//to point to the new tail, then makes the new previous next pointer point to the head, and then the old tail next previous
+		// point to the old tail.
+		Node<T>* old_tail = head->prev;
+		old_tail->next = new Node<T>(n);
+		head->prev = old_tail->next;
+		head->prev->next = head;
+		old_tail->next->prev = old_tail;
+	}
+	
+	// TODO: Assessed, 1 mark
+	//		0.5 marks for forward referencing (i.e. ->next is correct)
+	//		0.5 marks for backward referencing (i.e. ->prev is correct)
+}
+
+// Removal, delete first element found matching param, update references
+template<class T>
+void LinkedList<T>::Remove(T n)
+{
+
+	Node<T>* TempNode = head;
+
+	if (head->data == n) { // if head equals n, then another if statement to check if theres only 1 elemnet in the node, It deletes it. 
+		if (head->next = head) {
+			head = nullptr;
+			return;
+		}
+	}
+
+	else {
+		while (TempNode->next != head) { // while loop that goes through and checks if the node is the number, then dereferences it. 
+			if (TempNode->data == n) {
+				TempNode->prev->next = TempNode->next;
+				TempNode->next->prev = TempNode->prev;
+				break;
+			}
+			TempNode = TempNode->next; // iterates through the code
+		}
+	}
+}
+
+// Return element at position indexed by param <index>
+template<class T>
+Node<T>* LinkedList<T>::Get(int index)
+{
+	if (index == 0) return head;
+	Node<T>* temp = head;
+	for (int i = 0; i < index; i++)
+	{
+		temp = temp->next;
+	}
+	return temp;
+}
+
+
+// Flip the order of all elements in the LL such that head becomes the tail.
+template<class T>
+void LinkedList<T>::Reverse()
+{
+	Node<T>* Current_Node = head;
+	Node<T>* NodeTemp = NULL;
+	if (!head || head->next == head) { // if there is only 1 element or no ode, then returns
+		return;
+	}
+	head = head->prev;  //head equlas head previous
+	int size = Size(); //size varaible equals size of DLL
+
+	
+	for (int i = 0; i < size; i++) { // for loop to run code as many times as size varaible, and switches the pointers. so -> next is ->prev and vice versa
+		NodeTemp = Current_Node->next;
+		Current_Node->next = Current_Node->prev;
+		Current_Node->prev = NodeTemp;
+		Current_Node = Current_Node->prev;
+	}
+
+	
+	
+
+}
+
+// return count of elements in LL
+template<class T>
+int LinkedList<T>::Size()
+{
+	if (!head) return 0;
+	Node<T>* temp = head;
+	int count = 1;
+	while (temp->next != head)
+	{
+		temp = temp->next;
+		count++;
+	}
+	return count;
+}
+
+// Convert all elements into a vector 
+template<class T>
+std::vector<T> LinkedList<T>::ToVector()
+{
+	std::vector<T> returnVector;
+	if (!head) return returnVector;
+	Node<T>* temp = head;
+	for (int i = 0; i < Size(); i++)
+	{
+		returnVector[i] = temp->data;
+		temp = temp->next;
+	}
+	return returnVector;
+}
+
+// Return pointer to the tail 
+template<class T>
+Node<T>* LinkedList<T>::GetTail()
+{
+	if (!head) return nullptr;
+	return head->prev;
+}
+
+
+// A generic toString (numeric types typically)
+template<class T>
+std::string LinkedList<T>::ToString()
+{
+	std::string returnString = "[";
+	Node<T>* t = head;
+	while (t)
+	{
+		returnString += std::to_string(t->data);
+		// comma if there is more to come.
+		if (t->next != head)
+		{
+			returnString += ", ";
+		}
+		else
+		{
+			break;	// we're done, leave.
+		}
+		t = t->next;
+	}
+	return returnString + "]\n";	// end and newline.
+}
+
+// specific toString for ll<std::string> 
+template <>
+std::string LinkedList<std::string>::ToString()
+{
+	std::string returnString = "[";
+	Node<std::string>* t = head;
+	while (t)
+	{
+		returnString += t->data;
+
+		// comma if there is more to come.
+		if (t->next != head)
+		{
+			returnString += ", ";
+		}
+		else
+		{
+			break;	// we're done, leave.
+		}
+		t = t->next;
+	}
+	return returnString + "]\n";	// end and newline.
+}
+
+// specific toString for ll<char> 
+template <>
+std::string LinkedList<char>::ToString()
+{
+	std::string returnString = "[";
+	Node<char>* t = head;
+	while (t)
+	{
+		returnString += t->data;
+
+		// comma if there is more to come.
+		if (t->next != head)
+		{
+			returnString += ", ";
+		}
+		else
+		{
+			break;	// we're done, leave.
+		}
+		t = t->next;
+	}
+	return returnString + "]\n";	// end and newline.
+}
+
+// Sample main() method for testing.
+// Comment out or delete entire method INCLUDING SIGNATURE before submission.
