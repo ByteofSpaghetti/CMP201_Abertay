@@ -1,0 +1,154 @@
+// William Kavanagh, CMP201.2022
+// AX1.2 Partial Implementation
+
+#include <iostream>
+#include "StackAndQueue.h"
+
+// Default constructor, init array
+ArrayStack::ArrayStack()
+{
+    arr = new int[capacity];
+}
+
+// Remove first element, return value.
+int ArrayStack::Pop()
+{
+    int Top = 0;
+    if (stackTop == -1) {  //if stack is empty returns -1
+        return -1;
+    }
+    else {
+        Top = arr[stackTop]; //Takes value of the first element of the original stackTop, deletes it and returns it.
+        stackTop--;
+        return Top;
+    }
+    
+    // TODO: ASSESSED [1]
+    return 0;
+}
+
+// Check first element, return value.
+int ArrayStack::Peek()
+{
+    if (stackTop == -1) { //if stack is empty returns -1
+        return -1;
+    }
+
+    else { // else it returns the element at the top of the stack
+        return arr[stackTop];
+    }
+    // TODO: ASSESSED [0.5]
+}
+
+// Add element to top of stack, 
+// calls DoubleArray() where appropriate
+void ArrayStack::Push(int n)
+{
+    if (stackTop == -1) { //if stack is empty, makes n equal to top of the list
+        stackTop++;
+        arr[stackTop] = n;
+    }
+
+    else if (stackTop == capacity - 1) { // if capacity is full,size of array is doubled, and n added to stack
+        DoubleArray();
+        stackTop++;
+        arr[stackTop] = n;
+    }
+
+    else { // else it adds n to the stack
+        stackTop++;
+        arr[stackTop] = n;
+    }
+    }
+
+// Print elements in Stack neatly
+// DO NOT CHANGE: used for testing and assessment
+void ArrayStack::Display()
+{
+    std::cout << arr[0] << "\t<- head" << std::endl;
+    for (int i = 1; i < stackTop + 1; i++)
+    {
+        std::cout << arr[i] << std::endl;
+    }
+}
+
+// Updates array pointer to new array of double the size
+// elements are copied in from old array with position preserved.
+void ArrayStack::DoubleArray()
+{
+    capacity *= 2;
+    int* new_arr = new int[capacity];
+    for (int i = 0; i < stackTop + 1; i++)
+    {
+        new_arr[i] = arr[i];
+    }
+    arr = new_arr;
+}
+
+// Node constructor
+Node::Node(int n)
+{
+    next = nullptr;
+    data = n;
+}
+
+// QL constructor
+QueueList::QueueList() // initialises front and back to equal nullptr
+{
+    front = nullptr;
+    back = nullptr;
+    // TODO: ASSESSED [0.5]
+}
+
+// Add item to back of queue
+void QueueList::Enqueue(int n)
+{
+    Node* temp = new Node(n); //makes a new node called temp
+    if (!front) { // if the queue is empty makes both front and back equal temp
+        front = temp;
+        back = temp;
+    }
+    
+    else { //adds the new node to the back of the queue.
+        back->next = temp;
+        back = temp;
+    }
+    // TODO: ASSESSED [1]
+}
+
+// Remove item from front of queue
+int QueueList::Dequeue()
+{
+    Node* temp = front; // makes new node with the value at the front.
+    int top = front->data;
+    
+    if (!front) {
+        return NULL;
+    }
+
+    else { //returns value of front node.
+        front = temp->next;
+        return top;
+    }
+    // TODO: ASSESSED [1]
+}
+
+// Print elements in Stack neatly
+// DO NOT CHANGE: used for testing and assessment
+void QueueList::Display()
+{
+    if (!front)
+    {
+        std::cout << "[]";
+        return;
+    }
+    Node* n = front;
+    std::cout << "f: ";
+    while (n != back)
+    {
+        std::cout << n->data << ",\t";
+        n = n->next;
+    }
+    std::cout << "b: " << n->data << std::endl;
+}
+
