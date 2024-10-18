@@ -1,0 +1,186 @@
+// Author William Kavanagh, Abertay.
+// w.kavanagh@abertay.ac.uk
+// CMP201 Practical 2 -- Partial Solution.
+
+
+#include <iostream>				// You may want this for testing with a main()
+#include <string>				// for std::string required for ToString()
+
+#include "LinkedList.h"	
+using namespace std;			// This can stay for now. We will stop using it soon.
+
+// No args constructor, make empty ADT
+LinkedList::LinkedList() {
+	head = nullptr;
+}
+
+// Single element constructor, head with node of value given
+LinkedList::LinkedList(int n)
+{
+	Node* node1 = new Node(n);
+	head = node1;
+}
+
+// default destructor
+LinkedList::~LinkedList()
+{
+}
+
+// append element to LL with value n
+void LinkedList::Insert(int n)
+{
+	if (!head) {
+		head = new Node(n); //if head is not null, we continue, if it is we point to it as the new head of a structure.
+		return; // essentially a break statement
+	}
+	Node* temp; //creates a pointer temp, which is put equal to the current head, and then loops through through until the end of the list is found and then new variable addded on. 
+	temp = head;
+	while (temp->next != nullptr) {
+		temp = temp->next;
+	}
+	temp->next = new Node(n);
+	
+	// TODO - assessed [1]
+}
+
+// remove first instance of element with value n
+void LinkedList::Remove(int n)
+{
+	if (head->data == n) { // checks value of head node, if it is n then dereference
+		head = head->next;
+		return;
+	}
+	Node* temp;
+	temp = head;
+	while (temp->next != nullptr) { // checks we are not at the end of the list
+		if (temp->next->data == n) { // check if value of next is n, if so removes it.
+			temp->next = temp->next->next;
+			return;
+		}
+		temp = temp->next;
+	}
+	// TODO - assessed [1]
+}
+
+// remove all instances of element with value n
+void LinkedList::RemoveAll(int n)
+{/*while temp does not equal null, loops through node and removes them*/
+	Node* temp;
+	temp = head;
+	if (head->data == n) { // checks value of head node, if it is n then dereference
+		head = head->next;
+	}
+	while (temp->next != nullptr) {
+		if (temp->next->data == n) {
+			temp->next = temp->next->next;
+		}//not sure why need data to make it equal int
+		temp = temp->next;
+	}
+	// TODO - assessed [1]
+}
+
+// get size of linkedlist
+int LinkedList::Size()
+{
+	int count = 0;
+	if (head != nullptr) {
+		count = 1;
+	}
+	Node* temp = head;
+	while (temp->next)
+	{
+		count++;
+		temp = temp->next;
+	}
+	return count;
+}
+
+// get pointer to final element in linked list
+Node* LinkedList::GetTail()
+{
+	Node* temp = head;
+	if (!head)
+	{
+		return nullptr;
+	}
+	while (temp->next != nullptr)
+	{
+		temp = temp->next;
+	}
+	return temp;
+}
+
+// print out all elements in order, but pretty.
+string LinkedList::ToString()
+{
+	string list;
+	Node* temp;
+	temp = head;
+	int tempint = 0;
+
+	list = list + "[";
+
+	for (int i = 0; i < Size(); i++) { //for loop that goes through and makes an int equal to the value of node, converts it to a string, adds commas and brackets, and then returns it.
+		tempint = temp->data;
+		list = list + to_string(tempint) + ",";
+		temp = temp->next;
+	}
+	
+	list = list + "]";
+
+	// TODO - assessed [1]
+	return list;
+}
+
+// Node constructor, set value to n.
+Node::Node(int n)
+{
+	data = n;
+	next = nullptr;
+}
+
+// Use for testing. Remove or comment out before submitted, or [-1]
+/*int main()
+{
+
+
+	LinkedList* ll = new LinkedList(5);
+	cout << ll->Size() << "\n";
+
+	LinkedList* ll2 = new LinkedList();
+	cout << ll2->Size() << "\n";
+
+	LinkedList* ll3 = new LinkedList();
+	for (int i = 0; i < 10; i++) { ll3->Insert(i); }
+	cout << ll3->Size() << "\n";
+
+
+    LinkedList* check_ll = new LinkedList(5);
+    check_ll -> Insert(10);
+    if (check_ll -> head -> next -> data == 10) {
+        cout << "Insert seems to be working\n";
+    }
+    LinkedList* ll = new LinkedList();
+    ll->Insert(5);
+    ll->Insert(10);
+    ll->Insert(5);
+    ll->Insert(15);
+	cout << ll->ToString() << endl;
+	ll->Remove(10);
+
+	cout << ll->head->next->data << "\n";
+
+    ll->Remove(10);
+   if (ll -> head -> next -> data == 5) {
+        cout << "Remove from after head is working";
+    }
+	ll->RemoveAll(5);
+	if (ll->head->next->data == 15) {
+		     cout << "Remove all from after head is working";
+		 }
+
+    return 0;
+
+}*/
+
+
