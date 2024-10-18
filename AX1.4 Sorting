@@ -1,0 +1,117 @@
+// CMP201.2022 AX1.4 Sorting
+// William Kavanagh, Abertay University
+
+#include "Sorting.h"
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>		/* time */
+#include <iostream>
+#include <chrono>		/* timing */
+#include <string>
+
+// Bubble up and bubble back down.
+// Runs in O(N^2).
+void CocktailShakerSort(int a[], int size)
+{//initalising variables
+	bool swap = true;
+	int end_array = size - 1;
+	int start_array = 0;
+
+	while (end_array > start_array) {//code runs while end of array is larger than start of array
+		for (int i = start_array; i<end_array; i++) {  //for loop that runs through the array, with an if statement that swaps positions
+			//of values if one is larger than the next one in the array, moving smallest to the left and changes swap bool to true
+			if (a[i] > a[i + 1]) {
+				std::swap(a[i], a[i + 1]);
+				swap = true;
+			}
+		}
+		if (!swap) { //if not swapped break out of function
+			break;
+		}
+		swap = false;
+		end_array--;
+		for (int j = end_array; j >= start_array; j--) { //does the same as the previous for loop but in the opposite direction
+			if (a[j] > a[j + 1]) {
+				std::swap(a[j], a[j + 1]);
+				swap = true;
+			}
+		}
+		start_array++;
+	}
+
+	// TODO: assessed, [1.0]
+	
+}
+
+// IN-PLACE implementation of insertion sort.
+// Runs in O(N^2).
+void InsertionSort(int a[], int size)
+{
+
+	for (int i = 1; i < size; i++) {//runs the amount of time equal to the size of the array
+		for (int j = i; j > 0 && a[j] < a[j - 1]; j--) { //runs as long as the conditions are met, which makes sure the array does not go out of bounds.
+			std::swap(a[j], a[j - 1]);
+		}
+	}
+}
+
+// Partition function for QuickSort.
+// Runs in O(n) and chooses the final element as the pivot
+int partition(int a[], int begin, int end)
+{
+	int pivot = a[end];
+	int start = begin -1;
+
+	for (int j = begin; j < end; j++) {//runs through the size of the array
+		if (a[j] < pivot) { //if selected element of array is less than the chosen pivot point, start is incrememnted and start and 
+			//variable j are swapped
+			start++;
+			std::swap(a[start], a[j]);
+		}
+	}
+
+	std::swap(a[start + 1], a[end]); //swaps 1 from the start and end place in the array
+	// TODO: assessed, [2.0]
+	return start+1; //returns  1 from the start
+}
+
+// Sorting using partition() and recusion. Runs in O(n log(n))
+void QuickSort(int a[], int begin, int end)
+{ 
+	int partitions = 0;
+	if (end > begin) { // if end is larger than beiginning then call partition funcition, and call Quicksort with various parameters
+		partitions = partition(a, begin, end);
+		QuickSort(a, begin, partitions-1);
+		QuickSort(a, partitions + 1, end);
+		
+	}
+
+	// TODO: assessed, [0.5]
+	
+}
+
+// Takes an array and it's size (as int), fills the array with random values from 1 to size*3
+void fillArray(int a[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		a[i] = rand() % (size * 3);
+	}
+}
+
+// Utility function: O(n) sorted check with early exit.
+bool isSorted(int a[], int size)
+{
+	for (int i = 1; i < size; i++)
+	{
+		if (a[i] < a[i - 1]) return false;
+	}
+	return true;
+}
+
+// Utility function: Get two time points and return a string of nanoseconds between them.
+std::string timeDelta(std::chrono::steady_clock::time_point t, std::chrono::steady_clock::time_point t2)
+{
+	long timeDelta = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t).count();
+	return std::to_string(timeDelta) + " ns";
+}
+
